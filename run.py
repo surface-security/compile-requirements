@@ -43,11 +43,15 @@ logger = logging.getLogger(__name__)
 
 
 def build_parser():
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('files', metavar='FILE', type=Path, nargs='+',
-                        help='path to requirements.txt-like file')
-    parser.add_argument('--debug', '-d', action='store_true',
-                        help='debug verbosity')
+    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser.add_argument(
+        "files",
+        metavar="FILE",
+        type=Path,
+        nargs="+",
+        help="path to requirements.txt-like file",
+    )
+    parser.add_argument("--debug", "-d", action="store_true", help="debug verbosity")
     return parser
 
 
@@ -56,10 +60,10 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     if args.debug:
         logger.setLevel(logging.DEBUG)
-        logger.debug('debug enabled')
+        logger.debug("debug enabled")
 
     imported_requirements = set(map(str, args.files))
-    
+
     for initial_req in args.files:
         with initial_req.open("r") as inf:
             imported_requirements.update(
@@ -75,7 +79,7 @@ def main(argv=None):
         ss.update(
             {
                 install_req_from_parsed_requirement(req)
-                for req in parse_requirements(str(f), session='reqs')
+                for req in parse_requirements(str(f), session="reqs")
             }
         )
 
@@ -88,10 +92,12 @@ def main(argv=None):
             continue
 
         if not item.req.specifier:
-            logger.warning(f'{item} is not pinned to (a) specific version(s)')
+            logger.warning(f"{item} is not pinned to (a) specific version(s)")
 
         if requirements.get(item.name, item).req.specifier != item.req.specifier:
-            logger.fatal(f'{item.name} is duplicated with different versions: {item.req.specifier} vs {requirements[item.name].req.specifier}')
+            logger.fatal(
+                f"{item.name} is duplicated with different versions: {item.req.specifier} vs {requirements[item.name].req.specifier}"
+            )
             return 1
 
         if item.name in requirements:
@@ -112,5 +118,5 @@ def main(argv=None):
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())
